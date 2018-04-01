@@ -6,11 +6,13 @@ For CUDA compatiable (Nvidia GPU) XNOR convolutional kernel, check out [this rep
 ## xGEMM (Binarized General Matrix Multiply on Intel Xeon Phi)
 
 Run xCMMAbench.c for benchmarking the algorithm.
+
 **Important note: Here, the binarization time of the second matrix (B) is not taken into consideration.
                   This is due to the fact that these will be pre binarized in the network. 
                   We have also ignored the _considerable_ savings (as we scale up) we will have by pre-storing
                   the _transposed_ binarized B matrix, as this can be said for full precision CMMA algorithm as well,
                   but to a lesser extent. (Essentially, the xCMMA algorithm should scale better as well.)**
+                  
 ## xCONV (Binarized convolution on Intel Xeon Phi)
 
 Run xCONVbench.c for benchmarking the algorithm.
