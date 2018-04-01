@@ -3,9 +3,12 @@
 //				Implemented by Yash Akhauri.
 // Notes:
 //		- Performance tests matrix multiply algorithms on a Intel Xeon Phi 7210 Processor.
-//		- To compile, make sure the directory of echo ~/_directory_/xconv.out | qsub matches.
+//		- To compile, make sure the directory of echo ~/_director_/xconv.out | qsub matches.
 // To Compile:
-//		icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMAbench.c -o xcmma.out && echo ~/xcmma.out | qsub 
+//		Xeon Phi KNl 7210
+//		icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMAbench.c -o xcmmabench.out && echo ~/tbench/xcmmabench.out | qsub 
+//		Xeon Gold 6128
+//		icpc -xCORE-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMAbench.c -o xcmmabench.out && echo ~/tbench/xcmmabench.out | qsub 
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +47,7 @@ void printBits(size_t const size, void const * const ptr){
 int main( void )
 {	
 	int MX_SIZE;
-	for(int size_setter=0; size_setter<=7; size_setter+++){
+	for(int size_setter=0; size_setter<=7; size_setter++){
 		float bintime_tot = 0;
 		MX_SIZE = 64*(pow(2, size_setter));								// Takes matrix size  
 		size_t m, n, p;													// from 64 to 8192
@@ -195,7 +198,7 @@ int main( void )
 		}
 		dTimeE = dsecnd();
 		printf( "\nBinarization A - Completed in: %.7f seconds\n", ( dTimeE - dTimeS ) / TEST_LOOP);
-		bintime_tot += ( dTimeE - dTimeS ) / TEST_LOOP
+		bintime_tot += ( dTimeE - dTimeS ) / TEST_LOOP;
 		dTimeS = dsecnd();
 		for(int jj = 0; jj < TEST_LOOP; jj++){
 			#pragma omp parallel for
@@ -234,7 +237,7 @@ int main( void )
 			}
 		}
 		dTimeE = dsecnd();
-		bintime_tot += ( dTimeE - dTimeS ) / TEST_LOOP
+		bintime_tot += ( dTimeE - dTimeS ) / TEST_LOOP;
 		printf( "\nBinarized Multiplication - Completed in: %.7f seconds\n", ( dTimeE - dTimeS ) / (double) TEST_LOOP);
 		printf("\nTotal Time: %f", bintime_tot);
 		// printf("\nBinarized multiplication result:\n");
