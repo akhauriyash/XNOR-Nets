@@ -5,8 +5,10 @@
 //		- Performance tests matrix multiply algorithms on a Intel Xeon Phi 7210 Processor.
 //		- To compile, make sure the directory of echo ~/_director_/xconv.out | qsub matches.
 // To Compile:
-//		icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
-//    icpc -xCORE-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
+//	Xeon Phi KNL
+//	icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
+//	Xeon Gold 6128
+//    	icpc -xCORE-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
@@ -46,6 +48,7 @@ void printBits(size_t const size, void const * const ptr){
             byte = (b[i] >> j) & 1;
             printf("%u", byte);
         }
+	
     puts("");    printf("\n");             
     }
 
