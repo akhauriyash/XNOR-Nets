@@ -25,15 +25,21 @@ In progress
 ## To run:
    These codes have been written on the Colfax Cluster optimized for **Intel Xeon Phi KNL 7210.**
    To run xCMMA.c, execute this:
+   
    on Xeon Phi KNL 7210
+   
    `icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xCMMA.out && echo ~/parallel/xCMMA.out | qsub`
+   
    on Xeon Gold 6128
+   
    `icpc -xCORE-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xCMMA.out && echo ~/parallel/xCMMA.out | qsub`
   
 ##  Hardware specifications:
+
   * Intel® Xeon Phi™ 7210 Processor
+
   * Intel® Xeon Gold 6128 Processor
-    
+  
 ##  Note:
   This is a work in progress. There might be some mistakes here. 
   Do let me know if you find any logical errors in the code.
