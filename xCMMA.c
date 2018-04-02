@@ -5,10 +5,8 @@
 //		- Performance tests matrix multiply algorithms on a Intel Xeon Phi 7210 Processor.
 //		- To compile, make sure the directory of echo ~/_director_/xconv.out | qsub matches.
 // To Compile:
-//	Xeon Phi KNL
-//	icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
-//	Xeon Gold 6128
-//    	icpc -xCORE-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
+//		icpc -xMIC-AVX512 -qopenmp -mkl -fp-model fast=2 -fma -unroll=4 xCMMA.c -o xcmma.out && echo ~/xcmma.out | qsub 
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
@@ -48,7 +46,6 @@ void printBits(size_t const size, void const * const ptr){
             byte = (b[i] >> j) & 1;
             printf("%u", byte);
         }
-	
     puts("");    printf("\n");             
     }
 
@@ -115,7 +112,27 @@ int main( void )
 			pC[j][i] = 0;
 		}
 	}
+////////////////////////	Allocate binary matrices 	///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 
+	__attribute__( ( aligned( 64 ) ) ) BINTYPE **bA = NULL;		// Allocated binary
+	__attribute__( ( aligned( 64 ) ) ) BINTYPE **bB = NULL;		// matrices A and B
+
+	bA = ( BINTYPE ** )_mm_malloc(m*sizeof(BINTYPE *), 64);
+	bB = ( BINTYPE ** )_mm_malloc(n*sizeof(BINTYPE *), 64);
+		if( bA == NULL || bB == NULL )					// Error handling 
+		{																// if any array is
+			printf( "\nERROR: Can't allocate memory for  matrices\n" );	// not allocated
+			_mm_free( bA );
+			_mm_free( bB );
+			return ( int )0;
+		}
+	for(int i = 0; i<m; i++){
+		bA[i] = (BINTYPE *)_mm_malloc((p/32)*sizeof(BINTYPE), 64);
+	}
+	for(int i = 0; i<n; i++){
+		bB[i] = (BINTYPE *)_mm_malloc((p/32)*sizeof(BINTYPE), 64);
+	}
 ////////////////////////	FP Matrix multiplication 	///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 	float sum = 0;
@@ -142,27 +159,7 @@ int main( void )
 		printf("\n");
 	}	printf("\n");
 
-////////////////////////	Allocate binary matrices 	///////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
 
-	__attribute__( ( aligned( 64 ) ) ) BINTYPE **bA = NULL;		// Allocated binary
-	__attribute__( ( aligned( 64 ) ) ) BINTYPE **bB = NULL;		// matrices A and B
-
-	bA = ( BINTYPE ** )_mm_malloc(m*sizeof(BINTYPE *), 64);
-	bB = ( BINTYPE ** )_mm_malloc(n*sizeof(BINTYPE *), 64);
-		if( bA == NULL || bB == NULL )					// Error handling 
-		{																// if any array is
-			printf( "\nERROR: Can't allocate memory for  matrices\n" );	// not allocated
-			_mm_free( bA );
-			_mm_free( bB );
-			return ( int )0;
-		}
-	for(int i = 0; i<m; i++){
-		bA[i] = (BINTYPE *)_mm_malloc((p/32)*sizeof(BINTYPE), 64);
-	}
-	for(int i = 0; i<n; i++){
-		bB[i] = (BINTYPE *)_mm_malloc((p/32)*sizeof(BINTYPE), 64);
-	}
 
 ////////////////////////	  Binarization of A&B   	///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
